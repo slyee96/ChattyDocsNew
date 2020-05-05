@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "595522667412",
+    "firebase_url": "https://chattydocs-525db.firebaseio.com",
+    "project_id": "chattydocs-525db",
+    "storage_bucket": "chattydocs-525db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:595522667412:android:5bb0e21c3b565e47ab8581",
+        "android_client_info": {
+          "package_name": "com.example.chattydocs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "595522667412-eekhqgbv8nd0ji8m5oi408to7mkp83na.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN48p2xks2jXsflzzr3_OQGj1OdKdQKTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "595522667412-eekhqgbv8nd0ji8m5oi408to7mkp83na.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
