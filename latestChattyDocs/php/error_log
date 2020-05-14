@@ -1,0 +1,48 @@
+[26-Feb-2020 22:46:07 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected end of file in /home2/myondbco/public_html/latestChattyDocs/php/token.php on line 26
+[26-Feb-2020 22:47:43 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected end of file in /home2/myondbco/public_html/latestChattyDocs/php/token.php on line 26
+[26-Feb-2020 22:52:27 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected end of file in /home2/myondbco/public_html/latestChattyDocs/php/token.php on line 26
+[27-Feb-2020 18:36:45 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected end of file in /home2/myondbco/public_html/latestChattyDocs/php/token.php on line 26
+[29-Feb-2020 20:42:22 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected end of file in /home2/myondbco/public_html/latestChattyDocs/php/token.php on line 26
+[04-Mar-2020 09:48:11 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected '<' in /home2/myondbco/public_html/latestChattyDocs/php/token.php on line 21
+[16-Apr-2020 22:25:16 Asia/Kuala_Lumpur] PHP Warning:  mysqli::__construct(): (HY000/2002): No such file or directory in /home2/myondbco/public_html/latestChattyDocs/php/dbconnect.php on line 7
+[07-May-2020 14:01:21 Asia/Kuala_Lumpur] PHP Warning:  curl_setopt() expects exactly 3 parameters, 2 given in /home2/myondbco/public_html/latestChattyDocs/php/registerPatient.php on line 94
+[10-May-2020 14:13:55 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 50
+[10-May-2020 14:15:57 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 50
+[10-May-2020 14:16:00 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 50
+[10-May-2020 14:19:00 Asia/Kuala_Lumpur] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 50
+[10-May-2020 14:58:15 Asia/Kuala_Lumpur] PHP Warning:  Use of undefined constant QB_PATH_SESSION - assumed 'QB_PATH_SESSION' (this will throw an Error in a future version of PHP) in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 23
+[10-May-2020 14:58:17 Asia/Kuala_Lumpur] PHP Fatal error:  Uncaught Error: Call to undefined function pr() in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php:77
+Stack trace:
+#0 /home2/myondbco/public_html/latestChattyDocs/php/index.php(4): quickGetUsers(NULL)
+#1 {main}
+  thrown in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 77
+[10-May-2020 14:58:21 Asia/Kuala_Lumpur] PHP Warning:  Use of undefined constant QB_PATH_SESSION - assumed 'QB_PATH_SESSION' (this will throw an Error in a future version of PHP) in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 23
+[10-May-2020 14:58:23 Asia/Kuala_Lumpur] PHP Fatal error:  Uncaught Error: Call to undefined function pr() in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php:77
+Stack trace:
+#0 /home2/myondbco/public_html/latestChattyDocs/php/index.php(4): quickGetUsers(NULL)
+#1 {main}
+  thrown in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 77
+[10-May-2020 14:58:33 Asia/Kuala_Lumpur] PHP Warning:  Use of undefined constant QB_PATH_SESSION - assumed 'QB_PATH_SESSION' (this will throw an Error in a future version of PHP) in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 23
+[10-May-2020 14:58:35 Asia/Kuala_Lumpur] PHP Fatal error:  Uncaught Error: Call to undefined function pr() in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php:77
+Stack trace:
+#0 /home2/myondbco/public_html/latestChattyDocs/php/index.php(4): quickGetUsers(NULL)
+#1 {main}
+  thrown in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 77
+[10-May-2020 15:00:05 Asia/Kuala_Lumpur] PHP Warning:  Use of undefined constant QB_PATH_SESSION - assumed 'QB_PATH_SESSION' (this will throw an Error in a future version of PHP) in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 23
+[10-May-2020 15:00:07 Asia/Kuala_Lumpur] PHP Fatal error:  Uncaught Error: Call to undefined function pr() in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php:77
+Stack trace:
+#0 /home2/myondbco/public_html/latestChattyDocs/php/index.php(4): quickGetUsers(NULL)
+#1 {main}
+  thrown in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 77
+[10-May-2020 15:00:16 Asia/Kuala_Lumpur] PHP Warning:  Use of undefined constant QB_PATH_SESSION - assumed 'QB_PATH_SESSION' (this will throw an Error in a future version of PHP) in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 23
+[10-May-2020 15:00:18 Asia/Kuala_Lumpur] PHP Fatal error:  Uncaught Error: Call to undefined function pr() in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php:77
+Stack trace:
+#0 /home2/myondbco/public_html/latestChattyDocs/php/index.php(4): quickGetUsers(NULL)
+#1 {main}
+  thrown in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 77
+[10-May-2020 15:01:05 Asia/Kuala_Lumpur] PHP Warning:  Use of undefined constant QB_PATH_SESSION - assumed 'QB_PATH_SESSION' (this will throw an Error in a future version of PHP) in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 23
+[10-May-2020 15:01:07 Asia/Kuala_Lumpur] PHP Fatal error:  Uncaught Error: Call to undefined function pr() in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php:77
+Stack trace:
+#0 /home2/myondbco/public_html/latestChattyDocs/php/index.php(4): quickGetUsers(NULL)
+#1 {main}
+  thrown in /home2/myondbco/public_html/latestChattyDocs/php/registerQuickBlox.php on line 77
