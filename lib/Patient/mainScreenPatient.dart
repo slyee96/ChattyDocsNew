@@ -32,7 +32,7 @@ class _MainScreenPatientState extends State<MainScreenPatient> {
   int currentTabIndex;
   int index, tap;
   bool gotData;
-  String totalNotification, username, role, password;
+  String totalNotification, email, role, password;
   String urlNoti = "http://myondb.com/latestChattyDocs/php/notiTotalNumber.php";
 
   @override
@@ -43,7 +43,7 @@ class _MainScreenPatientState extends State<MainScreenPatient> {
     index = 0;
     totalNotification = "0";
     gotData = false;
-    notification();
+    //notification();
     tabs = [
       ScreenPatient1(patient: widget.patient),
       ScreenPatient2(patient: widget.patient),
@@ -116,15 +116,15 @@ class _MainScreenPatientState extends State<MainScreenPatient> {
     );
   }
 
-  Future<void> notification() async {
+  /*Future<void> notification() async {
     checking();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     role = prefs.getString('role');
-    username = prefs.getString('username');
+    email = prefs.getString('email');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.wifi ||
         connectivityResult == ConnectivityResult.mobile) {
-      http.post(urlNoti, body: {"role": role, "username": username}).then(
+      http.post(urlNoti, body: {"role": role, "email": email}).then(
           (res) async {
         setState(() {
           totalNotification = res.body;
@@ -147,5 +147,5 @@ class _MainScreenPatientState extends State<MainScreenPatient> {
     await db.rawInsert('DELETE FROM mainnoti WHERE id > 0');
     await db.rawInsert(
         'INSERT INTO mainnoti (number) VALUES ("' + totalNotification + '")');
-  }
+  }*/
 }

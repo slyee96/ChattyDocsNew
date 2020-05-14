@@ -71,3 +71,8 @@ class NotificationDetail {
       this.notiID,
       this.status});
 }
+
+class User {
+  final String uid;
+  User({this.uid});
+}

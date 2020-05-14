@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:chattydocs/Chat/auth.dart';
+import 'package:chattydocs/Chat/database.dart';
+import 'package:chattydocs/Chat/helperfunctions.dart';
 import 'package:chattydocs/data.dart';
 import 'package:chattydocs/loginscreen.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:device_info/device_info.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 File _image;
 final String urlUploadPsychiatrist =
@@ -39,6 +43,8 @@ String _username,
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 bool _isChecked = false;
 final Psychiatrist psychiatrist = new Psychiatrist();
+AuthService authService = new AuthService();
+DatabaseMethods databaseMethods = new DatabaseMethods();
 
 class RegisterScreenPsychiatrist extends StatefulWidget {
   @override
@@ -408,7 +414,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
         Toast.show(res.body, context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
         _image = null;
-        savepref(_username, _password);
+        savepref(_email, _password);
         _usernamecontroller.text = '';
         _passcontroller.text = '';
         _namecontroller.text = '';
@@ -417,8 +423,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
         _phonecontroller.text = '';
         _languagecontroller.text = '';
         pr.hide();
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+        registerFirebase();
       }).catchError((err) {
         print(err);
       });
@@ -436,16 +441,33 @@ class RegisterWidgetState extends State<RegisterWidget> {
       _isChecked = value;
     });
   }
+  void registerFirebase() async {
+    await authService.signUpWithEmailAndPassword(_email, _password).then((result) {
+      if (result != null) {
+        Map<String, String> userDataMap = {
+          "userName": _username,
+          "userEmail": _email
+        };
+        databaseMethods.addUserInfo(userDataMap);
+        HelperFunctions.saveUserLoggedInSharedPreference(true);
+        HelperFunctions.saveUserNameSharedPreference(_username);
+        HelperFunctions.saveUserEmailSharedPreference(_email);
 
-  void savepref(String username, String password) async {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+      }
+    });
+  }
+
+  void savepref(String email, String password) async {
     print('Inside savepref');
-    _username = _usernamecontroller.text;
+    _email = _emailcontroller.text;
     _password = _passcontroller.text;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //true save pref
-    await prefs.setString('username', username);
+    await prefs.setString('email', email);
     await prefs.setString('pass', password);
-    print('Save pref $_username');
+    print('Save pref $_email');
     print('Save pref $_password');
   }
 

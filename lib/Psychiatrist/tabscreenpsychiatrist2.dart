@@ -1,3 +1,8 @@
+import 'package:chattydocs/Chat/constants.dart';
+import 'package:chattydocs/Chat/database.dart';
+import 'package:chattydocs/Chat/helperfunctions.dart';
+import 'package:chattydocs/Psychiatrist/chatPsychiatrist.dart';
+import 'package:chattydocs/Psychiatrist/searchPsychiatrist.dart';
 import 'package:chattydocs/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,149 +18,114 @@ class ScreenPsychiatrist2 extends StatefulWidget {
 
   ScreenPsychiatrist2({Key key, this.psychiatrist, this.patient});
   @override
-  _ScreenPsychiatrist3State createState() => _ScreenPsychiatrist3State();
+  _ScreenPsychiatrist2State createState() => _ScreenPsychiatrist2State();
 }
 
-class _ScreenPsychiatrist3State extends State<ScreenPsychiatrist2>
-    with TickerProviderStateMixin {
-  final List<Msg> _messages = <Msg>[];
-  final TextEditingController _textController = new TextEditingController();
-  bool _isWriting = false;
+class _ScreenPsychiatrist2State extends State<ScreenPsychiatrist2>{
+  DatabaseMethods databaseMethods = new DatabaseMethods();
+  Stream chatRoomStream;
+
+  Widget chatRoomsList() {
+    return StreamBuilder(
+      stream: chatRoomStream,
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.documents.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return ChatRoomTile(
+                    userName: snapshot.data.documents[index].data['chatRoomId']
+                        .toString()
+                        .replaceAll("_", "")
+                        .replaceAll(Constants.myName, ""),
+                    chatRoomId: snapshot.data.documents[index].data["chatRoomId"],
+                  );
+                })
+            : Container();
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    getUserInfogetChats();
+    super.initState();
+  }
+
+  getUserInfogetChats() async {
+    Constants.myName = await HelperFunctions.getUserNameSharedPreference();
+    setState(() {
+      databaseMethods.getChatRoom(Constants.myName).then((val) {
+        setState(() {
+          chatRoomStream = val;
+          print(
+            "we got the data + ${chatRoomStream.toString()} this is name  ${Constants.myName}");
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.green[100],
-        resizeToAvoidBottomPadding: false,
-        appBar: new AppBar(
-          title: new Text("Chat Application"),
-          centerTitle: true,
-          backgroundColor: Colors.green,
-        ),
-        body: new Column(children: <Widget>[
-          new Flexible(
-              child: new ListView.builder(
-            itemBuilder: (_, int index) => _messages[index],
-            itemCount: _messages.length,
-            reverse: true,
-            padding: new EdgeInsets.all(6.0),
-          )),
-          new Divider(height: 1.0),
-          new Container(
-            child: _buildComposer(),
-            decoration: new BoxDecoration(color: Theme.of(context).cardColor),
+        title: 'Material App',
+        home: Scaffold(
+          backgroundColor: Colors.green[50],
+          appBar: AppBar(
+            title: Text('CHAT ROOM'),
+            centerTitle: true,
+            backgroundColor: Colors.green,
           ),
-        ]),
-      ),
-    );
-  }
-
-  Widget _buildComposer() {
-    return new IconTheme(
-      data: new IconThemeData(color: Theme.of(context).accentColor),
-      child: new Container(
-          margin: const EdgeInsets.symmetric(horizontal: 9.0),
-          child: new Row(
-            children: <Widget>[
-              new Flexible(
-                child: new TextField(
-                  controller: _textController,
-                  onChanged: (String txt) {
-                    setState(() {
-                      _isWriting = txt.length > 0;
-                    });
-                  },
-                  onSubmitted: _submitMsg,
-                  decoration: new InputDecoration.collapsed(
-                      hintText: "Enter some text to send a message"),
-                ),
-              ),
-              new Container(
-                  margin: new EdgeInsets.symmetric(horizontal: 3.0),
-                  child: Theme.of(context).platform == TargetPlatform.iOS
-                      ? new CupertinoButton(
-                          child: new Text("Submit"),
-                          onPressed: _isWriting
-                              ? () => _submitMsg(_textController.text)
-                              : null)
-                      : new IconButton(
-                          icon: new Icon(Icons.message),
-                          onPressed: _isWriting
-                              ? () => _submitMsg(_textController.text)
-                              : null,
-                        )),
-            ],
-          ),
-          decoration: Theme.of(context).platform == TargetPlatform.iOS
-              ? new BoxDecoration(
-                  border: new Border(top: new BorderSide(color: Colors.brown)))
-              : null),
-    );
-  }
-
-  void _submitMsg(String txt) {
-    _textController.clear();
-    setState(() {
-      _isWriting = false;
-    });
-    Msg msg = new Msg(
-      txt: txt,
-      animationController: new AnimationController(
-          vsync: this, duration: new Duration(milliseconds: 800)),
-    );
-    setState(() {
-      _messages.insert(0, msg);
-    });
-    msg.animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    for (Msg msg in _messages) {
-      msg.animationController.dispose();
-    }
-    super.dispose();
+          body: chatRoomsList(),
+          floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.search),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchPsychiatrist()));
+              }),
+        ));
   }
 }
 
-class Msg extends StatelessWidget {
-  Msg({this.txt, this.animationController});
-  final String txt;
-  final AnimationController animationController;
+class ChatRoomTile extends StatelessWidget {
+  final String userName;
+  final String chatRoomId;
 
+  ChatRoomTile({this.userName, this.chatRoomId});
   @override
-  Widget build(BuildContext ctx) {
-    return new SizeTransition(
-      sizeFactor: new CurvedAnimation(
-          parent: animationController, curve: Curves.easeOut),
-      axisAlignment: 0.0,
-      child: new Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
-        child: new Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Container(
-              margin: const EdgeInsets.only(right: 18.0),
-              child: new CircleAvatar(child: new Text(defaultUserName[0])),
-            ),
-            new Expanded(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Text(defaultUserName,
-                      style: Theme.of(ctx).textTheme.subhead),
-                  new Container(
-                    margin: const EdgeInsets.only(top: 6.0),
-                    child: new Text(txt),
-                  ),
-                ],
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) => ChatPsychiatrist(
+            chatRoomId: chatRoomId,
+          )
+        ));
+      },
+      child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Row(children: [
+              Container(
+                height: 30,
+                width: 30,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(50)),
+                child: Text("${userName.substring(0, 1).toUpperCase()}",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black, fontSize: 18)),
               ),
-            ),
-          ],
-        ),
-      ),
+              SizedBox(width: 8),
+              Text(userName,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                  ))
+            ])
+    ),
     );
   }
 }

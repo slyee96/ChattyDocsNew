@@ -1,8 +1,9 @@
 import 'package:chattydocs/loginscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:quickblox_sdk/quickblox_sdk.dart';
+
 
 void main() => runApp(SplashScreen());
-
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

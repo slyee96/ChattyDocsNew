@@ -1,6 +1,8 @@
-
 import 'dart:io';
 import 'dart:async';
+import 'package:chattydocs/Chat/auth.dart';
+import 'package:chattydocs/Chat/database.dart';
+import 'package:chattydocs/Chat/helperfunctions.dart';
 import 'package:chattydocs/data.dart';
 import 'package:chattydocs/loginscreen.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:device_info/device_info.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() => runApp(MyApp());
 File _image;
@@ -40,6 +43,8 @@ String _username,
 bool _isChecked = false;
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 final Patient patient = new Patient();
+AuthService authService = new AuthService();
+DatabaseMethods databaseMethods = new DatabaseMethods();
 
 class RegisterScreenPatient extends StatefulWidget {
   @override
@@ -466,7 +471,6 @@ class RegisterWidgetState extends State<RegisterWidget> {
     _phone = _phonecontroller.text;
     currentHealthy = patient.healthyBackground;
     _problem = _problemcontroller.text;
-
     print(_password);
     if ((_password.length > 5) &&
         (_image != null) &&
@@ -475,7 +479,6 @@ class RegisterWidgetState extends State<RegisterWidget> {
           type: ProgressDialogType.Normal, isDismissible: false);
       pr.style(message: "Registration in progress");
       pr.show();
-
       String base64Image = base64Encode(_image.readAsBytesSync());
       http.post(urlUploadPatient, body: {
         "encoded_string": base64Image,
@@ -491,22 +494,19 @@ class RegisterWidgetState extends State<RegisterWidget> {
         "token": token,
       }).then((res) {
         print(res.statusCode);
-          Toast.show(res.body, context,
-              duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-          _image = null;
-          savepref(_username, _password);
-          _usernamecontroller.text = '';
-          _passcontroller.text = '';
-          _namecontroller.text = '';
-          _emailcontroller.text = '';
-          _addresscontroller.text = '';
-          _phonecontroller.text = '';
-          _problemcontroller.text = '';
-          pr.hide();
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => LoginPage()));
+        Toast.show(res.body, context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        _image = null;
+        savepref(_email, _password);
+        _usernamecontroller.text = '';
+        _passcontroller.text = '';
+        _namecontroller.text = '';
+        _emailcontroller.text = '';
+        _addresscontroller.text = '';
+        _phonecontroller.text = '';
+        _problemcontroller.text = '';
+        registerFirebase();
+        pr.hide();
       }).catchError((err) {
         print(err);
       });
@@ -519,21 +519,39 @@ class RegisterWidgetState extends State<RegisterWidget> {
     }
   }
 
+  void registerFirebase() async {
+    await authService.signUpWithEmailAndPassword(_email, _password).then((result) {
+      if (result != null) {
+        Map<String, String> userDataMap = {
+          "userName": _username,
+          "userEmail": _email
+        };
+        databaseMethods.addUserInfo(userDataMap);
+        HelperFunctions.saveUserLoggedInSharedPreference(true);
+        HelperFunctions.saveUserNameSharedPreference(_username);
+        HelperFunctions.saveUserEmailSharedPreference(_email);
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+      }
+    });
+  }
+
   void _onChange(bool value) {
     setState(() {
       _isChecked = value;
     });
   }
 
-  void savepref(String username, String password) async {
+  void savepref(String email, String password) async {
     print('Inside savepref');
-    _username = _usernamecontroller.text;
+    _email = _emailcontroller.text;
     _password = _passcontroller.text;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //true save pref
-    await prefs.setString('username', username);
+    await prefs.setString('email', email);
     await prefs.setString('pass', password);
-    print('Save pref $_username');
+    print('Save pref $_email');
     print('Save pref $_password');
   }
 

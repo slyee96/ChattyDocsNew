@@ -34,7 +34,7 @@ class _MainScreenPsychiatristState extends State<MainScreenPsychiatrist> {
   int currentTabIndex;
   int index, tap;
   bool gotData;
-  String totalNotification, username, role, password;
+  String totalNotification, email, role, password;
   String urlNoti = "http://myondb.com/latestChattyDocs/php/notiTotalNumber.php";
 
   @override
@@ -129,11 +129,11 @@ class _MainScreenPsychiatristState extends State<MainScreenPsychiatrist> {
   Future<void> notification() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     role = prefs.getString('role');
-    username = prefs.getString('username');
+    email = prefs.getString('email');
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.wifi ||
         connectivityResult == ConnectivityResult.mobile) {
-      http.post(urlNoti, body: {"role": role, "username": username}).then(
+      http.post(urlNoti, body: {"role": role, "email": email}).then(
           (res) async {
         setState(() {
           totalNotification = res.body;
