@@ -2,6 +2,7 @@ import 'package:chattydocs/Chat/constants.dart';
 import 'package:chattydocs/Chat/database.dart';
 import 'package:chattydocs/Chat/widget.dart';
 import 'package:chattydocs/Psychiatrist/chatPsychiatrist.dart';
+import 'package:chattydocs/Psychiatrist/welcomeChatPsychiatrist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
  
@@ -108,9 +109,9 @@ class _SearchPsychiatristState extends State<SearchPsychiatrist> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
+    return WillPopScope(
+      onWillPop: _onBackPressAppBar,
+      child: Scaffold(
         appBar: AppBar(
           title: Text('Search'),
           centerTitle: true,
@@ -168,6 +169,15 @@ class _SearchPsychiatristState extends State<SearchPsychiatrist> {
         ),
       ),
     );
+  }
+  Future<bool> _onBackPressAppBar() {
+    Navigator.pop(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WelcomePsychiatrist(
+          ),
+        ));
+    return Future.value(false);
   }
 }
   

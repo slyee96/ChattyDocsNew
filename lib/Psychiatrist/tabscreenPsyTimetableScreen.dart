@@ -1,3 +1,4 @@
+import 'package:chattydocs/Psychiatrist/addtimetablePsychiatrist.dart';
 import 'package:chattydocs/Psychiatrist/tabscreenPsyUpdate.dart';
 import 'package:chattydocs/Psychiatrist/tabscreenpsychiatrist.dart';
 import 'package:chattydocs/data.dart';
@@ -176,6 +177,24 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                 borderRadius: BorderRadius.circular(20.0)),
                             minWidth: 200,
                             height: 50,
+                            child: Text('Add'),
+                            color: Colors.lightGreen,
+                            textColor: Colors.black,
+                            elevation: 15,
+                            onPressed: _clickAdd,
+                          ),
+                          SizedBox(
+              height: 20,
+            ),
+                          MaterialButton(
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    color: Colors.black,
+                                    width: 2,
+                                    style: BorderStyle.solid),
+                                borderRadius: BorderRadius.circular(20.0)),
+                            minWidth: 200,
+                            height: 50,
                             child: Text('Update'),
                             color: Colors.lightGreen,
                             textColor: Colors.black,
@@ -191,6 +210,12 @@ class _TimetableScreenState extends State<TimetableScreen> {
             }),
       ),
     );
+  }
+
+  void _clickAdd() {
+    Navigator.push(context, MaterialPageRoute(
+            builder: (context) =>
+                AddTimetablePscyhiatristScreen(psychiatrist: widget.psychiatrist)));
   }
 
   void _clickUpdate() {
@@ -210,42 +235,5 @@ class _TimetableScreenState extends State<TimetableScreen> {
           ),
         ));
     return Future.value(false);
-  }
-
-  Future<Null> refreshList() async {
-    await Future.delayed(Duration(seconds: 2));
-    this.makeRequest();
-    return null;
-  }
-
-  Future<String> makeRequest() async {
-    /*String urlLoadJobs = "http://myondb.com/myNelayanLY/php/load_fishes.php";
-    ProgressDialog pr = new ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Loading Fishes");
-    pr.show();
-    http.post(urlLoadJobs, body: {
-      "email": widget.user.email ?? "notavail",
-      "latitude": _currentPosition.latitude.toString(),
-      "longitude": _currentPosition.longitude.toString(),
-    }).then((res) {
-      setState(() {
-        var extractdata = json.decode(res.body);
-        data = extractdata["fishes"];
-        perpage = (data.length / 10);
-        print("data");
-        print(data);
-        pr.dismiss();
-      });
-    }).catchError((err) {
-      print(err);
-      pr.dismiss();
-    });
-    return null;*/
-  }
-
-  Future init() async {
-    this.makeRequest();
-    //_getCurrentLocation();
   }
 }

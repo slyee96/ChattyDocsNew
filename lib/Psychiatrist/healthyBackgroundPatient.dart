@@ -1,17 +1,16 @@
 import 'package:chattydocs/data.dart';
 import 'package:flutter/material.dart';
-
-class PatientRecord extends StatefulWidget {
+ 
+class HealthyBackground extends StatefulWidget {
   final Psychiatrist psychiatrist;
   final Patient patient;
 
-  const PatientRecord({Key key, this.psychiatrist, this.patient})
-      : super(key: key);
+  const HealthyBackground({Key key, this.psychiatrist, this.patient}) : super(key: key);
   @override
-  _PatientRecordState createState() => _PatientRecordState();
+  _HealthyBackgroundState createState() => _HealthyBackgroundState();
 }
 
-class _PatientRecordState extends State<PatientRecord> {
+class _HealthyBackgroundState extends State<HealthyBackground> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

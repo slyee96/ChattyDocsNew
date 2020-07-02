@@ -1,4 +1,3 @@
-import 'package:chattydocs/Psychiatrist/tabscreenPsyPatientRecordScreen.dart';
 import 'package:chattydocs/Psychiatrist/tabscreenPsyPatientScreen.dart';
 import 'package:chattydocs/Psychiatrist/tabscreenPsyTimetableScreen.dart';
 import 'package:chattydocs/data.dart';
@@ -233,12 +232,6 @@ class _ScreenPsychiatrist1State extends State<ScreenPsychiatrist1>
             builder: (context) => PatientScreen(psychiatrist: psychiatrist)));
   }
 
-  void _clickRecord() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PatientRecord(psychiatrist: psychiatrist)));
-  }
 
   void _clickTime() {
     Navigator.push(

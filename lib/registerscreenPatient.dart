@@ -254,7 +254,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
                 return InputDecorator(
                     decoration: InputDecoration(
                         labelText:
-                            'Please choose your healthy mental problem: '),
+                            'Choose your healthy mental problem: '),
                     child: new DropdownButtonHideUnderline(
                       child: new DropdownButton<String>(
                         items: healthyproblem.map((String val) {

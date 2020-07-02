@@ -13,7 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity/connectivity.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MyApp());
@@ -76,8 +75,8 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 Image.asset(
                   'assets/images/chattydocs.png',
-                  width: 130,
-                  height: 150,
+                  width: 120,
+                  height: 140,
                 ),
                 SizedBox(
                   height: 5,
@@ -232,10 +231,6 @@ class _LoginPageState extends State<LoginPage> {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.wifi ||
           connectivityResult == ConnectivityResult.mobile) {
-        ProgressDialog pr = new ProgressDialog(context,
-            type: ProgressDialogType.Normal, isDismissible: false);
-        pr.style(message: "Login in");
-        pr.show();
         http.post(urlLoginPatient, body: {
           "email": _email,
           "password": _password,
@@ -258,7 +253,6 @@ class _LoginPageState extends State<LoginPage> {
               HelperFunctions.saveUserEmailSharedPreference(
                   userInfoSnapshot.documents[0].data["userEmail"]);
               if (dres[0] == "success") {
-                pr.hide();
                 Patient patient = new Patient(
                     role: dres[1],
                     patientid: dres[2],
@@ -281,14 +275,12 @@ class _LoginPageState extends State<LoginPage> {
               } else {
                 Toast.show("Login Failed", context,
                     duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                pr.hide();
               }
             }
           }).catchError((err) {
             Toast.show(err.toString(), context,
                 duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
             print("On Login error: " + (err).toString());
-            pr.hide();
             print(err);
           });
         });
@@ -307,13 +299,6 @@ class _LoginPageState extends State<LoginPage> {
     _password = _passcontroller.text;
     print('onLoginPsychiatrist');
     if (_email != "" && _password != "") {
-      var connectivityResult = await (Connectivity().checkConnectivity());
-      if (connectivityResult == ConnectivityResult.wifi ||
-          connectivityResult == ConnectivityResult.mobile) {
-        ProgressDialog pr = new ProgressDialog(context,
-            type: ProgressDialogType.Normal, isDismissible: false);
-        pr.style(message: "Login in");
-        pr.show();
         http.post(urlLoginPsychiatrist, body: {
           "email": _email,
           "password": _password,
@@ -336,7 +321,6 @@ class _LoginPageState extends State<LoginPage> {
               HelperFunctions.saveUserEmailSharedPreference(
                   userInfoSnapshot.documents[0].data["userEmail"]);
               if (dres[0] == "success") {
-                pr.hide();
                 Psychiatrist psychiatrist = new Psychiatrist(
                     role: dres[1],
                     psychiatristID: dres[2],
@@ -362,21 +346,15 @@ class _LoginPageState extends State<LoginPage> {
               } else {
                 Toast.show("Login Failed", context,
                     duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                pr.hide();
               }
             }
           }).catchError((err) {
             Toast.show(err.toString(), context,
                 duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
             print("On Login error: " + (err).toString());
-            pr.hide();
             print(err);
           });
         });
-      } else {
-        Toast.show("No Internet Connection!", context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      }
     } else {
       Toast.show("Please fill in email address and password", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);

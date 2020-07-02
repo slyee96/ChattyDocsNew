@@ -97,7 +97,7 @@ class _PatientScreenState extends State<PatientScreen> {
                         data[index]['patienthealthy'],
                         data[index]['patientproblem'],
                         widget.psychiatrist.name,
-                        widget.psychiatrist.psychiatristID),
+                        widget.psychiatrist.email),
                     onLongPress: _onPsychiatristDelete,
                     child: Padding(
                       padding: const EdgeInsets.all(2.0),
@@ -107,17 +107,6 @@ class _PatientScreenState extends State<PatientScreen> {
                             child: Container(
                               child: Column(
                                 children: <Widget>[
-                                  Text(
-                                      "Role: " +
-                                          data[index]['patientrole']
-                                              .toString()
-                                              .toUpperCase(),
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
                                   Text("Full Name: " +
                                       data[index]['patientfullname']),
                                   SizedBox(
@@ -164,7 +153,7 @@ class _PatientScreenState extends State<PatientScreen> {
     pr.style(message: "Loading Patient");
     pr.show();
     http.post(urlLoadPatient, body: {
-      "username": widget.psychiatrist.psychiatristID ?? "notavail",
+      "email": widget.psychiatrist.email ?? "notavail",
     }).then((res) {
       setState(() {
         var extractdata = json.decode(res.body);

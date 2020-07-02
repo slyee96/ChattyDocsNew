@@ -42,7 +42,8 @@ class Psychiatrist {
       phone,
       qualification,
       language,
-      imagePsychiatrist, 
+      imagePsychiatrist,
+      timetable,
       availableTime,
       location;
 
@@ -56,6 +57,7 @@ class Psychiatrist {
       this.qualification,
       this.language,
       this.imagePsychiatrist,
+      this.timetable,
       this.availableTime,
       this.location});
 }
@@ -75,4 +77,11 @@ class NotificationDetail {
 class User {
   final String uid;
   User({this.uid});
+}
+
+class Message{
+  final String title;
+  final String body;
+
+  Message({this.title,this.body,});
 }

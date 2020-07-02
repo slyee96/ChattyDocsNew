@@ -1,5 +1,7 @@
 import 'package:chattydocs/Patient/tabscreenPatPsychiatristScreen.dart';
 import 'package:chattydocs/Patient/tabscreenpatient2.dart';
+import 'package:chattydocs/Patient/welcomeChatPatient.dart';
+import 'package:chattydocs/Psychiatrist/welcomeChatPsychiatrist.dart';
 import 'package:chattydocs/data.dart';
 import 'package:chattydocs/registerscreenPatient.dart';
 import 'package:chattydocs/registerscreenPsychiatrist.dart';
@@ -167,7 +169,7 @@ class _DetailInterfaceState extends State<DetailInterface> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ScreenPatient2(
+                        builder: (context) => WelcomeChatPatient(
                             psychiatrist: psychiatrist, patient: patient)));
               },
             ),

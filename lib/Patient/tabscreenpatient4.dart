@@ -1,7 +1,11 @@
+import 'package:chattydocs/Patient/aboutApp.dart';
 import 'package:chattydocs/Patient/editProfilePatient.dart';
+import 'package:chattydocs/Patient/mainScreenPatient.dart';
+import 'package:chattydocs/Psychiatrist/editProfilePsychiatrist.dart';
 import 'package:chattydocs/SlideRightRoute.dart';
 import 'package:chattydocs/data.dart';
 import 'package:chattydocs/loginscreen.dart';
+import 'package:chattydocs/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -9,6 +13,8 @@ import 'package:toast/toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 String urlgetuser = "http://myondb.com/projectLY/php/getPatient.php";
 String urluploadImage =
@@ -17,8 +23,10 @@ File _image;
 int number = 0;
 String _value;
 
+
 class ScreenPatient4 extends StatefulWidget {
   final Patient patient;
+  
 
   ScreenPatient4({Key key, this.patient});
   @override
@@ -26,6 +34,8 @@ class ScreenPatient4 extends StatefulWidget {
 }
 
 class _ScreenPatient4State extends State<ScreenPatient4> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
@@ -192,24 +202,15 @@ class _ScreenPatient4State extends State<ScreenPatient4> {
                         title: Text('My Journey'),
                       ),
                       ListTile(
-                        title: Text('Settings'),
-                      ),
-                      ListTile(
                         title: Text('Report a fault'),
                       ),
                       ListTile(
                         title: Text('About the App'),
+                        onTap: _aboutApp,
                       ),
                       ListTile(
                         title: Text('Log out'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        },
+                        onTap: _logOut,
                       ),
                     ]),
                   );
@@ -218,8 +219,8 @@ class _ScreenPatient4State extends State<ScreenPatient4> {
         ));
   }
 
-  void _settings(String role,patientid,password,name,email,phone,address,healthyBackground,problem,patientRecord,
-      dateAppointment) {
+  void _settings(String role, patientid, password, name, email, phone, address,
+      healthyBackground, problem, patientRecord, dateAppointment) {
     if (widget.patient.patientid == "user@noregister") {
       Toast.show("Not Allowed. Please register an account.", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
@@ -239,12 +240,10 @@ class _ScreenPatient4State extends State<ScreenPatient4> {
           dateAppointment: dateAppointment);
 
       Navigator.push(
-          context,
-          SlideRightRoute(
-              page:
-                  EditProfilePatient(patient: patient)));
+          context, SlideRightRoute(page: EditProfilePatient(patient: patient)));
     }
   }
+
   void _takePicture() async {
     if (widget.patient.name == "not register") {
       Toast.show("Not allowed", context,
@@ -294,5 +293,19 @@ class _ScreenPatient4State extends State<ScreenPatient4> {
         );
       },
     );
+  }
+  void _logOut() async {
+    try {
+      await _auth.signOut();
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SplashScreen()));
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+    void _aboutApp() async {
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AboutAppPatient()));
+
   }
 }

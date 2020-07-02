@@ -65,6 +65,16 @@ class AuthService {
     }
   }
 
+  Future<void> changePassword(String password) async {
+    FirebaseUser user = await _auth.currentUser();
+    user.updatePassword(password).then((_) {
+      print("Succesfull changed password");
+    }).catchError((error) {
+      print("Password can't be changed" + error.toString());
+    });
+    return null;
+  }
+  
   Future signOut() async {
     try {
       return await _auth.signOut();

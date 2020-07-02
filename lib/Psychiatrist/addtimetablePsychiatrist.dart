@@ -7,18 +7,18 @@ import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:flutter/services.dart';
 
-String urlUpdatePsychiatrist = "http://myondb.com/latestChattyDocs/php/updateTimeTablePscyhiatrist.php";
-class UpdatePscyhiatristScreen extends StatefulWidget {
+String urlAddPsychiatrist = "http://myondb.com/latestChattyDocs/php/addTimeTablePscyhiatrist.php";
+class AddTimetablePscyhiatristScreen extends StatefulWidget {
   final Psychiatrist psychiatrist;
 
-  const UpdatePscyhiatristScreen({Key key, this.psychiatrist})
+  AddTimetablePscyhiatristScreen({Key key, this.psychiatrist})
       : super(key: key);
   @override
-  _UpdatePscyhiatristScreenState createState() =>
-      _UpdatePscyhiatristScreenState();
+  _AddTimetablePscyhiatristScreenState createState() =>
+      _AddTimetablePscyhiatristScreenState();
 }
 
-class _UpdatePscyhiatristScreenState extends State<UpdatePscyhiatristScreen> {
+class _AddTimetablePscyhiatristScreenState extends State<AddTimetablePscyhiatristScreen> {
   final TextEditingController _availableTimecontroller =
       TextEditingController();
   final TextEditingController _locationcontroller = TextEditingController();
@@ -35,7 +35,7 @@ class _UpdatePscyhiatristScreenState extends State<UpdatePscyhiatristScreen> {
         resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.green[100],
         appBar: AppBar(
-          title: Text('Update'),
+          title: Text('Add Timetable'),
           backgroundColor: Colors.green,
         ),
         body: Column(
@@ -121,7 +121,7 @@ class _UpdatePscyhiatristScreenState extends State<UpdatePscyhiatristScreen> {
                   borderRadius: BorderRadius.circular(20.0)),
               minWidth: 200,
               height: 50,
-              child: Text('Go to Update'),
+              child: Text('Add'),
               color: Colors.lightGreen,
               textColor: Colors.black,
               elevation: 15,
@@ -149,14 +149,14 @@ class _UpdatePscyhiatristScreenState extends State<UpdatePscyhiatristScreen> {
   }
 
   void uploadData(){ 
-    print("Update");
+    print("Add");
     widget.psychiatrist.availableTime = _availableTimecontroller.text;
     widget.psychiatrist.location = _locationcontroller.text;
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Update in progress");
+    pr.style(message: "Add in progress");
     pr.show();
-    http.post(urlUpdatePsychiatrist, body: {
+    http.post(urlAddPsychiatrist, body: {
       "email": widget.psychiatrist.email,
       "availabletime": _availableTimecontroller.text,
       "location": _locationcontroller.text,
@@ -164,17 +164,14 @@ class _UpdatePscyhiatristScreenState extends State<UpdatePscyhiatristScreen> {
       Toast.show("Success", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       pr.hide();
-      Navigator.pop(context,
-            MaterialPageRoute(builder: (context) => TimetableScreen()));
-      _onLoginAfterUpdate(widget.psychiatrist.email, context);
+      _onLoginAfterAdd(widget.psychiatrist.email, context);
     }).catchError((err) {
       print(err);
       pr.hide();
     });
     return null;
   }
-
-  void _onLoginAfterUpdate(String email, BuildContext ctx) {
+  void _onLoginAfterAdd(String email, BuildContext ctx) {
     String urlgetuser = "http://myondb.com/latestChattyDocs/php/getTimetable.php";
     print("get data");
     http.post(urlgetuser, body: {
@@ -194,8 +191,8 @@ class _UpdatePscyhiatristScreenState extends State<UpdatePscyhiatristScreen> {
                 phone: dres[6],
                 qualification: dres[7],
                 language: dres[8],
-                availableTime: dres[9],
-                location: dres[10]);
+                availableTime: dres[11],
+                location: dres[12]);
         Navigator.push(ctx,
             MaterialPageRoute(builder: (context) => TimetableScreen(psychiatrist: psychiatrist)));
       }
@@ -203,5 +200,4 @@ class _UpdatePscyhiatristScreenState extends State<UpdatePscyhiatristScreen> {
       print(err);
     });
   }
-  
 }

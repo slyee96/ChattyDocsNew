@@ -3,6 +3,7 @@ import 'package:chattydocs/Chat/database.dart';
 import 'package:chattydocs/Chat/helperfunctions.dart';
 import 'package:chattydocs/Patient/chatPatient.dart';
 import 'package:chattydocs/Patient/searchPatient.dart';
+import 'package:chattydocs/Patient/welcomeChatPatient.dart';
 import 'package:chattydocs/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,110 +19,88 @@ class ScreenPatient2 extends StatefulWidget {
 }
 
 class _ScreenPatient2State extends State<ScreenPatient2> {
-  DatabaseMethods databaseMethods = new DatabaseMethods();
-  Stream chatRoomStream;
-
-  Widget chatRoomsList() {
-    return StreamBuilder(
-      stream: chatRoomStream,
-      builder: (context, snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.documents.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return ChatRoomTile(
-                    userName: snapshot.data.documents[index].data['chatRoomId']
-                        .toString()
-                        .replaceAll("_", "")
-                        .replaceAll(Constants.myName, ""),
-                    chatRoomId: snapshot.data.documents[index].data["chatRoomId"],
-                  );
-                })
-            : Container();
-      },
-    );
-  }
-
   @override
   void initState() {
-    getUserInfogetChats();
     super.initState();
-  }
-
-  getUserInfogetChats() async {
-    Constants.myName = await HelperFunctions.getUserNameSharedPreference();
-    setState(() {
-      databaseMethods.getChatRoom(Constants.myName).then((val) {
-        setState(() {
-          chatRoomStream = val;
-          print(
-            "we got the data + ${chatRoomStream.toString()} this is name  ${Constants.myName}");
-        });
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Material App',
-        home: Scaffold(
-          backgroundColor: Colors.green[50],
-          appBar: AppBar(
-            title: Text('CHAT ROOM'),
-            centerTitle: true,
-            backgroundColor: Colors.green,
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        resizeToAvoidBottomPadding: false,
+        backgroundColor: Colors.green[100],
+        appBar: AppBar(
+          title: Text('Chat'),
+          centerTitle: true,
+          backgroundColor: Colors.green,
+        ),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(2.0),
+                  child: Card(
+                      child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Row(children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Text('Chat List',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        MaterialButton(
+                                          shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: Colors.black,
+                                                  width: 2,
+                                                  style: BorderStyle.solid),
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0)),
+                                          minWidth: 200,
+                                          height: 50,
+                                          child: Text(
+                                              'Press'),
+                                          color: Colors.lightGreen,
+                                          textColor: Colors.black,
+                                          elevation: 15,
+                                          onPressed: _clickChat,
+                                        ),
+                                        SizedBox(height: 15),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ]))),
+                ),
+                SizedBox(height: 10),
+              ],
+            ),
           ),
-          body: chatRoomsList(),
-          floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.search),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SearchPatient()));
-              }),
-        ));
-  }
-}
-
-class ChatRoomTile extends StatelessWidget {
-  final String userName;
-  final String chatRoomId;
-
-  ChatRoomTile({this.userName, this.chatRoomId});
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) => ChatPatient(
-            chatRoomId: chatRoomId,
-          )
-        ));
-      },
-      child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            child: Row(children: [
-              Container(
-                height: 30,
-                width: 30,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.green[100],
-                    borderRadius: BorderRadius.circular(50)),
-                child: Text("${userName.substring(0, 1).toUpperCase()}",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.black, fontSize: 18)),
-              ),
-              SizedBox(width: 8),
-              Text(userName,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                  ))
-            ])
-    ),
+        ),
+      ),
     );
+  }
+
+  void _clickChat() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WelcomeChatPatient(
+                  patient: widget.patient,
+                  psychiatrist: widget.psychiatrist,
+                )));
   }
 }

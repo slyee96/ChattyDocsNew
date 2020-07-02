@@ -1,21 +1,33 @@
-import 'package:chattydocs/Psychiatrist/mainScreenPsychiatrist.dart';
+import 'package:chattydocs/Psychiatrist/healthyBackgroundPatient.dart';
+import 'package:chattydocs/SlideRightRoute.dart';
 import 'package:chattydocs/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+double perpage = 1;
+bool isLoading = false;
+
 class ScreenPsychiatrist3 extends StatefulWidget {
+  final Psychiatrist psychiatrist;
   final NotificationDetail notification;
-  const ScreenPsychiatrist3({Key key, this.notification}) : super(key: key);
+  final Patient patient;
+  const ScreenPsychiatrist3(
+      {Key key, this.notification, this.psychiatrist, this.patient})
+      : super(key: key);
 
   @override
   _ScreenPsychiatrist3State createState() => _ScreenPsychiatrist3State();
 }
 
 class _ScreenPsychiatrist3State extends State<ScreenPsychiatrist3> {
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  List data;
+  GlobalKey<RefreshIndicatorState> refreshKey;
+  List<String> tempList = List<String>();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final List<Message> messages = [];
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -25,9 +37,8 @@ class _ScreenPsychiatrist3State extends State<ScreenPsychiatrist3> {
         print("onMessage: $message");
         final notification = message['notification'];
         setState(() {
-          notification.add(NotificationDetail(
-              title: notification['title'],
-              subtitle: notification['subtitle']));
+          messages.add(Message(
+              title: notification['title'], body: notification['body']));
         });
       },
       onLaunch: (Map<String, dynamic> message) async {
@@ -35,9 +46,9 @@ class _ScreenPsychiatrist3State extends State<ScreenPsychiatrist3> {
 
         final notification = message['data'];
         setState(() {
-          notification.add(NotificationDetail(
+          messages.add(Message(
             title: '${notification['title']}',
-            subtitle: '${notification['subtitle']}',
+            body: '${notification['body']}',
           ));
         });
       },
@@ -52,103 +63,268 @@ class _ScreenPsychiatrist3State extends State<ScreenPsychiatrist3> {
   @override
   void dispose() {
     super.dispose();
+    init();
+    this.makeRequest();
   }
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
-    return WillPopScope(
-      onWillPop: _onBackPressAppBar,
-      child: Scaffold(
+    return new DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          resizeToAvoidBottomPadding: false,
           backgroundColor: Colors.green[100],
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(
-              ScreenUtil().setHeight(85),
-            ),
-            child: AppBar(
-              brightness: Brightness.light,
-              leading: IconButton(
-                onPressed: _onBackPressAppBar,
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  size: ScreenUtil().setWidth(30),
-                  color: Colors.grey,
-                ),
+          appBar: AppBar(
+            title: Text('Notification'),
+            centerTitle: true,
+            backgroundColor: Colors.green,
+            bottom: PreferredSize(
+              child: Column(
+                children: <Widget>[
+                  TabBar(
+                    unselectedLabelColor: Colors.black,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.green[300]),
+                    tabs: [
+                      Tab(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border:
+                                  Border.all(color: Colors.black, width: 1)),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text("INFORMATION"),
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border:
+                                  Border.all(color: Colors.black, width: 1)),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text("REPORT"),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              backgroundColor: Colors.green,
-              elevation: 1,
-              centerTitle: true,
-              title: Text(
-                "Notification",
-              ),
+              preferredSize: Size.fromHeight(50.0),
             ),
           ),
-          body: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 30, 10, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        widget.notification.title ?? "",
-                      ),
-                    ),
-                  ],
-                ),
+          body: TabBarView(
+            children: [
+              ListView(
+                children: messages.map(buildMessage).toList(),
               ),
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Flexible(
-                      child: Text((widget.notification.subtitle ?? "")),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 30, 10, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        "Thank you.",
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        "ChattyDocs Team",
-                      ),
-                    ),
-                  ],
+              SafeArea(
+                child: RefreshIndicator(
+                  key: refreshKey,
+                  color: Colors.blueAccent,
+                  onRefresh: () async {
+                    await refreshList();
+                  },
+                  child: ListView.builder(
+                    //Step 6: Count the data
+                    itemCount: data == null ? 1 : data.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return Container(
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                  title: Text('REPORT',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black))),
+                              TextField(
+                                decoration: InputDecoration(
+                                  hintText: "Search Patient Here...",
+                                  prefixIcon: Icon(Icons.search),
+                                  border: new OutlineInputBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(25.0),
+                                  ),
+                                ),
+                                onChanged: (text) {
+                                  //_filterPatientList(text, index);
+                                },
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                color: Colors.white,
+                                child: Center(
+                                  child: Text("List Patient",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      if (index == data.length && perpage > 1) {
+                        return Container(
+                          width: 250,
+                          color: Colors.white,
+                          child: MaterialButton(
+                            child: Text(
+                              "Load More",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            onPressed: () {},
+                          ),
+                        );
+                      }
+                      index -= 1;
+                      return Padding(
+                        padding: EdgeInsets.all(2.0),
+                        child: Card(
+                          elevation: 2,
+                          child: InkWell(
+                            onTap: () => _onPatientDetail(
+                                data[index]['patientrole'],
+                                data[index]['patientid'],
+                                data[index]['patientfullname'],
+                                data[index]['patientemail'],
+                                data[index]['patientphone'],
+                                data[index]['patienthealthy'],
+                                data[index]['patientproblem'],
+                                widget.psychiatrist.name,
+                                widget.psychiatrist.email),
+                            onLongPress: _onPsychiatristDelete,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text("Full Name: " +
+                                              data[index]['patientfullname']),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text("Email: " +
+                                              data[index]['patientemail']),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text("Phone: " +
+                                              data[index]['patientphone']),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
-          )),
-    );
+          ),
+        ));
   }
 
-  Future<bool> _onBackPressAppBar() async {
-    CurrentIndex index = new CurrentIndex(index: 3);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => MainScreenPsychiatrist(
-          index: index,
-        ),
-      ),
-    );
-    return Future.value(false);
+  _filterPatientList(String text, index) {
+    if (text.isNotEmpty) {
+      setState(() {
+        data[index]['patientfullname'] = tempList;
+      });
+    } else {
+      final List<String> filteredBreeds = List<String>();
+      tempList.map((breed) {
+        if (breed.contains(text.toString())) {
+          filteredBreeds.add(breed);
+        }
+      }).toList();
+      setState(() {
+        data.clear();
+        data.addAll(filteredBreeds);
+      });
+    }
   }
+
+  Future<String> makeRequest() async {
+    String urlLoadPatient =
+        "http://myondb.com/latestChattyDocs/php/searchloadPatient.php";
+    http.post(urlLoadPatient, body: {
+      "email": widget.psychiatrist.email ?? "notavail",
+    }).then((res) {
+      setState(() {
+        var extractdata = json.decode(res.body);
+        data = extractdata["patient"];
+        perpage = (data.length / 10);
+        print("data");
+        print(data);
+      });
+    }).catchError((err) {
+      print(err);
+    });
+    return null;
+  }
+
+  Future init() async {
+    this.makeRequest();
+  }
+
+  Future<Null> refreshList() async {
+    await Future.delayed(Duration(seconds: 2));
+    this.makeRequest();
+    return null;
+  }
+
+  void _onPatientDetail(
+      String role,
+      String patientid,
+      String name,
+      String email,
+      String phone,
+      String healthyBackground,
+      String problem,
+      String username,
+      String namePatient) {
+    Patient patient = new Patient(
+        role: role,
+        patientid: patientid,
+        name: name,
+        email: email,
+        phone: phone,
+        healthyBackground: healthyBackground,
+        problem: problem);
+    print(data);
+
+    Navigator.push(
+        context,
+        SlideRightRoute(
+            page: HealthyBackground(
+                psychiatrist: widget.psychiatrist, patient: patient))); //
+  }
+
+  void _onPsychiatristDelete() {
+    print("Delete");
+  }
+
+  Widget buildMessage(Message message) => ListTile(
+        title: Text(message.title),
+        subtitle: Text(message.body),
+      );
 }

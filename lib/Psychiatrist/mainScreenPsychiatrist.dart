@@ -49,7 +49,7 @@ class _MainScreenPsychiatristState extends State<MainScreenPsychiatrist> {
     tabs = [
       ScreenPsychiatrist1(psychiatrist: widget.psychiatrist),
       ScreenPsychiatrist2(psychiatrist: widget.psychiatrist),
-      ScreenPsychiatrist3(notification: widget.notification),
+      ScreenPsychiatrist3(notification: widget.notification,psychiatrist: widget.psychiatrist),
       ScreenPsychiatrist4(psychiatrist: widget.psychiatrist),
     ];
   }

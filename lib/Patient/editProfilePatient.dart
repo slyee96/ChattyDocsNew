@@ -1,4 +1,4 @@
-
+import 'package:chattydocs/Chat/auth.dart';
 import 'package:chattydocs/Patient/tabscreenpatient4.dart';
 import 'package:chattydocs/data.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +10,18 @@ String urlupdate =
     "http://myondb.com/latestChattyDocs/php/updateProfilePatient.php";
 String urlgetuser = "http://myondb.com/latestChattyDocs/php/getPatient.php";
 int number = 0;
-
-
+AuthService authService = new AuthService();
 class EditProfilePatient extends StatefulWidget {
   final Patient patient;
+  
 
   const EditProfilePatient({Key key, this.patient}) : super(key: key);
   @override
-  _EditProfilePatientState createState() =>
-      _EditProfilePatientState();
+  _EditProfilePatientState createState() => _EditProfilePatientState();
 }
 
 class _EditProfilePatientState extends State<EditProfilePatient> {
+  
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -144,9 +144,7 @@ class _EditProfilePatientState extends State<EditProfilePatient> {
     Navigator.pop(
         context,
         MaterialPageRoute(
-          builder: (context) => ScreenPatient4(
-            patient: widget.patient
-          ),
+          builder: (context) => ScreenPatient4(patient: widget.patient),
         ));
     return Future.value(false);
   }
@@ -197,10 +195,12 @@ class _EditProfilePatientState extends State<EditProfilePatient> {
                     });
                     Toast.show("Success", context,
                         duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                    Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => ScreenPatient4(
-                          patient: widget.patient,
-                        )));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScreenPatient4(
+                                  patient: widget.patient,
+                                )));
                     return;
                   } else {}
                 }).catchError((err) {
@@ -268,8 +268,14 @@ class _EditProfilePatientState extends State<EditProfilePatient> {
                       if (dres[0] == "success") {
                         Toast.show("Success", context,
                             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                        authService.changePassword(passController.text);
                         savepref(passController.text);
-                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenPatient4(
+                                      patient: widget.patient,
+                                    )));
                       }
                     });
                   } else {}
@@ -291,7 +297,6 @@ class _EditProfilePatientState extends State<EditProfilePatient> {
       },
     );
   }
-
   void _changePhone() {
     TextEditingController phoneController = TextEditingController();
     // flutter defined function
@@ -335,10 +340,12 @@ class _EditProfilePatientState extends State<EditProfilePatient> {
                       widget.patient.phone = dres[6];
                       Toast.show("Success ", context,
                           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                      Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => ScreenPatient4(
-                          patient: widget.patient,
-                        )));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ScreenPatient4(
+                                    patient: widget.patient,
+                                  )));
                       return;
                     });
                   }
@@ -366,7 +373,4 @@ class _EditProfilePatientState extends State<EditProfilePatient> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('pass', pass);
   }
-
 }
-
-

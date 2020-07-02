@@ -1,4 +1,5 @@
 
+import 'package:chattydocs/Chat/auth.dart';
 import 'package:chattydocs/Psychiatrist/mainScreenPsychiatrist.dart';
 import 'package:chattydocs/Psychiatrist/tabscreenpsychiatrist4.dart';
 import 'package:chattydocs/data.dart';
@@ -12,7 +13,7 @@ String urlupdate =
 String urlgetuser = "http://myondb.com/latestChattyDocs/php/getPsychiatrist.php";
 int number = 0;
 
-
+AuthService authService = new AuthService();
 class EditProfilePsychiatrist extends StatefulWidget {
   final Psychiatrist psychiatrist;
 
@@ -269,6 +270,7 @@ class _EditProfilePsychiatristState extends State<EditProfilePsychiatrist> {
                       if (dres[0] == "success") {
                         Toast.show("Success", context,
                             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                        authService.changePassword(passController.text);
                         savepref(passController.text);
                         Navigator.of(context).pop();
                       }

@@ -2,9 +2,13 @@ import 'package:chattydocs/Chat/constants.dart';
 import 'package:chattydocs/Chat/database.dart';
 import 'package:chattydocs/Chat/widget.dart';
 import 'package:chattydocs/Psychiatrist/tabscreenpsychiatrist2.dart';
+import 'package:chattydocs/data.dart';
 import 'package:flutter/material.dart';
- 
- 
+import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
+
+  Patient patient = new Patient();
+  Psychiatrist psychiatrist = new Psychiatrist();
 class ChatPsychiatrist extends StatefulWidget {
   final String chatRoomId;
 
@@ -35,6 +39,7 @@ class _ChatPsychiatristState extends State<ChatPsychiatrist> {
   }
 
   sendMessage() {
+    String message = messageEditingController.text;
     if (messageEditingController.text.isNotEmpty) {
       Map<String, dynamic> messageMap = {
         "message": messageEditingController.text,
@@ -42,7 +47,18 @@ class _ChatPsychiatristState extends State<ChatPsychiatrist> {
         'time': DateTime.now(),
       };
       databaseMethods.addMessageConversation(widget.chatRoomId, messageMap);
-      messageEditingController.text = "";
+      String urlUploadMessage = "http://myondb.com/latestChattyDocs/php/uploadChatPscyhiatrist.php";
+      http.post(urlUploadMessage, body: {
+        "message": message,
+        "sendby": Constants.myName,
+      }).then((res) {
+        print(res.statusCode);
+        Toast.show(res.body, context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        messageEditingController.text = "";
+      }).catchError((err) {
+        print(err);
+      });
     }
   }
 
@@ -73,7 +89,7 @@ class _ChatPsychiatristState extends State<ChatPsychiatrist> {
               Container(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
                   color: Colors.green[300],
                   child: Row(
                     children: [
@@ -143,7 +159,9 @@ class MessageTile extends StatelessWidget {
   MessageTile({Key key, this.message, this.issendByMe}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+      child:
+    Container(
         padding: EdgeInsets.only(top: 8,
           bottom: 8, left: issendByMe ? 0 : 24, right: issendByMe ? 24 : 0),
         width: MediaQuery.of(context).size.width,
@@ -174,7 +192,8 @@ class MessageTile extends StatelessWidget {
             style: TextStyle(
             color: Colors.black,
             fontSize: 22)),
-        )
+        ),
+    ),
     );
   }
 }

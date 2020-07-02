@@ -1,8 +1,11 @@
+import 'package:chattydocs/Patient/mainScreenPatient.dart';
+import 'package:chattydocs/Psychiatrist/aboutApp.dart';
 import 'package:chattydocs/Psychiatrist/editProfilePsychiatrist.dart';
 import 'package:chattydocs/Psychiatrist/mainScreenPsychiatrist.dart';
 import 'package:chattydocs/SlideRightRoute.dart';
 import 'package:chattydocs/data.dart';
 import 'package:chattydocs/loginscreen.dart';
+import 'package:chattydocs/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
@@ -13,7 +16,9 @@ import 'package:http/http.dart' as http;
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 String urlgetPsychiatrist =
     "http://myondb.com/latestChattyDocs/php/getPsychiatrist.php";
@@ -36,6 +41,7 @@ class _ScreenPsychiatrist4State extends State<ScreenPsychiatrist4> {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   bool start, connection, ready;
   int length, offLineLength;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -248,24 +254,15 @@ class _ScreenPsychiatrist4State extends State<ScreenPsychiatrist4> {
                         ),
                       ),
                       ListTile(
-                        title: Text('Settings'),
-                      ),
-                      ListTile(
                         title: Text('Report a fault'),
                       ),
                       ListTile(
                         title: Text('About the App'),
+                        onTap: _aboutApp,
                       ),
                       ListTile(
                         title: Text('Log out'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        },
+                        onTap: _logOut,
                       ),
                     ]),
                   );
@@ -276,7 +273,7 @@ class _ScreenPsychiatrist4State extends State<ScreenPsychiatrist4> {
 
   void _settings(String role, psychiatristID, password, name, email, phone,
       qualification, language, availableTime, location) {
-    if (widget.psychiatrist.psychiatristID == "user@noregister") {
+    if (widget.psychiatrist.email == "user@noregister") {
       Toast.show("Not Allowed. Please register an account.", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       return;
@@ -320,13 +317,12 @@ class _ScreenPsychiatrist4State extends State<ScreenPsychiatrist4> {
               child: new Text("Yes"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                _image =
-                    await ImagePicker.pickImage(source: ImageSource.camera);
+                _image = await ImagePicker.pickImage(source: ImageSource.camera);
 
                 String base64Image = base64Encode(_image.readAsBytesSync());
                 http.post(urluploadImagePsychiatrist, body: {
                   "encoded_string": base64Image,
-                  "username": widget.psychiatrist.psychiatristID,
+                  "email": widget.psychiatrist.email,
                 }).then((res) {
                   print(res.body);
                   if (res.body == "success") {
@@ -350,5 +346,19 @@ class _ScreenPsychiatrist4State extends State<ScreenPsychiatrist4> {
         );
       },
     );
+  }
+  void _logOut() async {
+    try {
+      await _auth.signOut();
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SplashScreen()));
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+  void _aboutApp() async {
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AboutApp()));
+
   }
 }
